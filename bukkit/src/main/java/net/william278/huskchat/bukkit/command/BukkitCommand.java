@@ -50,6 +50,7 @@ public class BukkitCommand extends Command {
     @Override
     public boolean execute(@NotNull CommandSender sender, @NotNull String commandLabel, @NotNull String[] args) {
         if (sender instanceof Player player) {
+            plugin.getHuskTownHook().ifPresent(hook -> hook.turnOffTownChat(player));
             command.onExecute(BukkitPlayer.adapt(player), args);
         } else {
             command.onExecute(ConsolePlayer.create(plugin), args);

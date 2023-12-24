@@ -35,7 +35,6 @@ import net.william278.huskchat.discord.SpicordHook;
 import net.william278.huskchat.discord.WebHook;
 import net.william278.huskchat.event.EventDispatcher;
 import net.william278.huskchat.getter.DataGetter;
-import net.william278.huskchat.husktown.HuskTownHook;
 import net.william278.huskchat.placeholders.PlaceholderReplacer;
 import net.william278.huskchat.player.Player;
 import net.william278.huskchat.player.PlayerCache;
@@ -86,12 +85,6 @@ public interface HuskChat {
         }
     }
 
-    default void loadHuskTownHook(){
-        if (getSettings().doHuskTownIntegration() && isPluginPresent("HuskTowns")) {
-            setHuskTownHook(new HuskTownHook());
-        }
-    }
-
     @NotNull
     EventDispatcher getEventDispatcher();
 
@@ -114,11 +107,7 @@ public interface HuskChat {
 
     Optional<DiscordHook> getDiscordHook();
 
-    Optional<HuskTownHook> getHuskTownHook();
-
     void setDiscordHook(@NotNull DiscordHook discordHook);
-
-    void setHuskTownHook(@NotNull HuskTownHook huskTownHook);
 
     @NotNull
     Version getVersion();

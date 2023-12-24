@@ -11,6 +11,7 @@ dependencies {
     compileOnly 'de.themoep:minedown-adventure:1.7.2-SNAPSHOT'
     compileOnly 'me.clip:placeholderapi:2.11.5'
     compileOnly 'org.jetbrains:annotations:24.1.0'
+    compileOnly 'net.william278:husktowns:2.6.1'
 }
 
 shadowJar {

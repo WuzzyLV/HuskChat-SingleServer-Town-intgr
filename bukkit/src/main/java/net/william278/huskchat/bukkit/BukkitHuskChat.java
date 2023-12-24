@@ -25,6 +25,7 @@ import net.william278.desertwell.util.Version;
 import net.william278.huskchat.HuskChat;
 import net.william278.huskchat.bukkit.command.BukkitCommand;
 import net.william278.huskchat.bukkit.event.BukkitEventDispatcher;
+import net.william278.huskchat.bukkit.husktown.HuskTownHook;
 import net.william278.huskchat.bukkit.listener.BukkitListener;
 import net.william278.huskchat.bukkit.placeholders.PlaceholderAPIReplacer;
 import net.william278.huskchat.bukkit.player.BukkitPlayer;
@@ -40,6 +41,7 @@ import net.william278.huskchat.placeholders.DefaultReplacer;
 import net.william278.huskchat.placeholders.PlaceholderReplacer;
 import net.william278.huskchat.player.Player;
 import net.william278.huskchat.player.PlayerCache;
+import net.william278.husktowns.api.HuskTownsAPI;
 import org.bukkit.command.CommandMap;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
@@ -63,6 +65,7 @@ public class BukkitHuskChat extends JavaPlugin implements HuskChat {
     private List<BukkitCommand> commands;
     private BukkitEventDispatcher eventDispatcher;
     private DiscordHook discordHook;
+    private HuskTownHook huskTownHook;
     private Locales locales;
     private DataGetter playerDataGetter;
     private PlayerCache playerCache;
@@ -87,6 +90,9 @@ public class BukkitHuskChat extends JavaPlugin implements HuskChat {
 
         // Load discord hook
         this.loadDiscordHook();
+
+        // Load HuskTown hook
+        this.loadHuskTownHook();
 
         // Load saved social spy state
         this.playerCache = new PlayerCache(this);
@@ -122,6 +128,17 @@ public class BukkitHuskChat extends JavaPlugin implements HuskChat {
         // Initialise metrics and log
         this.checkForUpdates();
         log(Level.INFO, "Enabled HuskChat version " + this.getVersion());
+    }
+
+    public void loadHuskTownHook() {
+        if (getSettings().doHuskTownIntegration() && isPluginPresent("HuskTowns")) {
+            huskTownHook = new HuskTownHook();
+        }
+    }
+
+    @NotNull
+    public Optional<HuskTownHook> getHuskTownHook() {
+        return Optional.ofNullable(huskTownHook);
     }
 
     @NotNull
