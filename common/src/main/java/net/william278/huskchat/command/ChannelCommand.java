@@ -43,6 +43,7 @@ public class ChannelCommand extends CommandBase {
         }
         if (player.hasPermission(getPermission())) {
             if (args.length == 1) {
+                plugin.getHuskTownHook().ifPresent(hook -> hook.turnOffTownChat(player));
                 plugin.getPlayerCache().switchPlayerChannel(player, args[0]);
             } else {
                 plugin.getLocales().sendMessage(player, "error_invalid_syntax", getUsage());

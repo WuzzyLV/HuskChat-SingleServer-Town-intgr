@@ -111,6 +111,9 @@ public class Settings {
     private Map<String, String> spicordReceiveChannelMap;
     private Map<String, String> spicordSendChannelMap;
 
+    // HuskTown integration
+    private boolean doHuskTownIntegration;
+
     // Server names
     private Map<String, String> serverNameReplacement;
 
@@ -216,6 +219,9 @@ public class Settings {
                 spicordSendChannelMap.put(channelID, configFile.getString("discord.spicord.send_channel_map." + channelID));
             }
         }
+
+        // HuskTown integration
+        doHuskTownIntegration = configFile.getBoolean("husktown.enabled", false);
 
         // Server name replacement
         serverNameReplacement = new LinkedHashMap<>();
@@ -696,6 +702,10 @@ public class Settings {
         return doDiscordIntegration;
     }
 
+    public boolean doHuskTownIntegration() {
+        return doHuskTownIntegration;
+    }
+
     @NotNull
     public Map<String, URL> getWebhookUrls() {
         return webhookUrls;
@@ -729,4 +739,5 @@ public class Settings {
     public Map<String, String> getServerNameReplacement() {
         return serverNameReplacement;
     }
+
 }

@@ -228,6 +228,9 @@ discord:
     #send_channel_map: # Send Discord messages on these channels (by numeric ID) to a specified in-game channel
     #  '123456789012345678': 'global'
 
+husktown:
+    enabled: true # If HuskTown is installed, and you are using single-server.
+
 # If you want %servername% to show something other than the server name,
 # set it here and uncomment this section
 #server_name_replacement:
