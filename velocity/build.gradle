@@ -1,21 +1,33 @@
+plugins {
+    id 'xyz.jpenilla.run-velocity' version '2.3.0'
+}
+
 dependencies {
     implementation project(path: ':common')
-
     implementation 'org.bstats:bstats-velocity:3.0.2'
 
-    compileOnly 'com.velocitypowered:velocity-api:3.2.0-SNAPSHOT'
-    compileOnly 'commons-io:commons-io:2.15.0'
-    compileOnly 'dev.dejvokep:boosted-yaml:1.3.1'
+    compileOnly "com.velocitypowered:velocity-api:${velocity_api_version}-SNAPSHOT"
+    compileOnly "com.velocitypowered:velocity-proxy:${velocity_api_version}-SNAPSHOT"
+
+    compileOnly 'io.netty:netty-codec-http:4.1.109.Final'
+    compileOnly 'it.unimi.dsi:fastutil:8.5.13'
+    compileOnly 'commons-io:commons-io:2.16.1'
     compileOnly 'de.themoep:minedown-adventure:1.7.2-SNAPSHOT'
     compileOnly 'org.jetbrains:annotations:24.1.0'
+    compileOnly 'org.projectlombok:lombok:1.18.32'
+    compileOnly 'net.kyori:adventure-nbt:4.16.0'
+
+    annotationProcessor 'org.projectlombok:lombok:1.18.32'
 }
 
 shadowJar {
-    relocate 'dev.dejvokep.boostedyaml', 'net.william278.huskchat.libraries.boostedyaml'
     relocate 'net.william278.profanitycheckerapi', 'net.william278.huskchat.libraries.profanitycheckerapi'
     relocate 'net.william278.desertwell', 'net.william278.huskchat.libraries.desertwell'
     relocate 'de.themoep', 'net.william278.huskchat.libraries'
     relocate 'dev.vankka', 'net.william278.huskchat.libraries'
+    relocate 'de.exlll', 'net.william278.huskchat.libraries'
+    relocate 'org.snakeyaml.engine', 'net.william278.huskchat.libraries.snakeyaml.engine'
+    relocate 'org.json', 'net.william278.huskchat.libraries.json'
 
     relocate 'org.apache', 'net.william278.huskchat.libraries'
     relocate 'org.jetbrains', 'net.william278.huskchat.libraries'
@@ -25,5 +37,13 @@ shadowJar {
     dependencies {
         //noinspection GroovyAssignabilityCheck
         exclude dependency(':slf4j-api')
+    }
+
+    minimize()
+}
+
+tasks {
+    runVelocity {
+        velocityVersion("${velocity_api_version}-SNAPSHOT")
     }
 }

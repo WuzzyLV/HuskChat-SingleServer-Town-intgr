@@ -2,22 +2,26 @@ dependencies {
     implementation project(path: ':common')
 
     implementation 'org.bstats:bstats-bungeecord:3.0.2'
-    implementation 'net.kyori:adventure-platform-bungeecord:4.3.1'
+    implementation 'net.kyori:adventure-platform-bungeecord:4.3.2'
 
     compileOnly 'net.md-5:bungeecord-api:1.20-R0.1-SNAPSHOT'
-    compileOnly 'commons-io:commons-io:2.15.0'
-    compileOnly 'dev.dejvokep:boosted-yaml:1.3.1'
+    compileOnly 'commons-io:commons-io:2.16.1'
     compileOnly 'net.alpenblock:BungeePerms:4.0-dev-143'
     compileOnly 'de.themoep:minedown-adventure:1.7.2-SNAPSHOT'
     compileOnly 'org.jetbrains:annotations:24.1.0'
+    compileOnly 'org.projectlombok:lombok:1.18.32'
+
+    annotationProcessor 'org.projectlombok:lombok:1.18.32'
 }
 
 shadowJar {
-    relocate 'dev.dejvokep.boostedyaml', 'net.william278.huskchat.libraries.boostedyaml'
     relocate 'net.william278.profanitycheckerapi', 'net.william278.huskchat.libraries.profanitycheckerapi'
     relocate 'net.william278.desertwell', 'net.william278.huskchat.libraries.desertwell'
     relocate 'de.themoep', 'net.william278.huskchat.libraries'
     relocate 'dev.vankka', 'net.william278.huskchat.libraries'
+    relocate 'de.exlll', 'net.william278.huskchat.libraries'
+    relocate 'org.snakeyaml.engine', 'net.william278.huskchat.libraries.snakeyaml.engine'
+    relocate 'org.json', 'net.william278.huskchat.libraries.json'
 
     relocate 'org.apache', 'net.william278.huskchat.libraries'
     relocate 'org.jetbrains', 'net.william278.huskchat.libraries'
@@ -28,4 +32,6 @@ shadowJar {
         //noinspection GroovyAssignabilityCheck
         exclude dependency(':slf4j-api')
     }
+
+    minimize()
 }
