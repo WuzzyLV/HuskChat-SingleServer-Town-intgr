@@ -21,37 +21,29 @@ package net.william278.huskchat.command;
 
 import net.william278.huskchat.HuskChat;
 import net.william278.huskchat.message.BroadcastMessage;
-import net.william278.huskchat.player.Player;
+import net.william278.huskchat.user.OnlineUser;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
 import java.util.StringJoiner;
 
 public class BroadcastCommand extends CommandBase {
 
     public BroadcastCommand(@NotNull HuskChat plugin) {
-        super(plugin.getSettings().getBroadcastCommandAliases(), "<message>", plugin);
+        super(plugin.getSettings().getBroadcastCommand().getBroadcastAliases(), "<message>", plugin);
+        this.operatorOnly = true;
     }
 
     @Override
-    public void onExecute(@NotNull Player player, @NotNull String[] args) {
-        if (player.hasPermission(getPermission())) {
-            if (args.length >= 1) {
-                StringJoiner message = new StringJoiner(" ");
-                for (String argument : args) {
-                    message.add(argument);
-                }
-                new BroadcastMessage(player, message.toString(), plugin).dispatch();
-            } else {
-                plugin.getLocales().sendMessage(player, "error_invalid_syntax", getUsage());
+    public void onExecute(@NotNull OnlineUser player, @NotNull String[] args) {
+        if (args.length >= 1) {
+            StringJoiner message = new StringJoiner(" ");
+            for (String argument : args) {
+                message.add(argument);
             }
+            new BroadcastMessage(player, message.toString(), plugin).dispatch();
         } else {
-            plugin.getLocales().sendMessage(player, "error_no_permission");
+            plugin.getLocales().sendMessage(player, "error_invalid_syntax", getUsage());
         }
     }
 
-    @Override
-    public List<String> onTabComplete(@NotNull Player player, @NotNull String[] args) {
-        return List.of();
-    }
 }

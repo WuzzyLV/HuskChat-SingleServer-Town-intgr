@@ -21,71 +21,65 @@ package net.william278.huskchat.command;
 
 import net.william278.huskchat.HuskChat;
 import net.william278.huskchat.message.PrivateMessage;
-import net.william278.huskchat.player.ConsolePlayer;
-import net.william278.huskchat.player.Player;
-import net.william278.huskchat.player.PlayerCache;
+import net.william278.huskchat.user.ConsoleUser;
+import net.william278.huskchat.user.OnlineUser;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
 public class ReplyCommand extends CommandBase {
 
     public ReplyCommand(@NotNull HuskChat plugin) {
-        super(plugin.getSettings().getReplyCommandAliases(), "<message>", plugin);
+        super(plugin.getSettings().getMessageCommand().getReplyAliases(), "<message>", plugin);
     }
 
     @Override
-    public void onExecute(@NotNull Player player, @NotNull String[] args) {
-        if (player.hasPermission(getPermission())) {
-            if (args.length >= 1) {
-                final Optional<Set<UUID>> lastMessengers = PlayerCache.getLastMessengers(player.getUuid());
-                if (lastMessengers.isEmpty()) {
-                    plugin.getLocales().sendMessage(player, "error_reply_no_messages");
-                    return;
-                }
-
-                final ArrayList<String> lastPlayers = new ArrayList<>();
-                for (UUID lastMessenger : lastMessengers.get()) {
-                    if (ConsolePlayer.isConsolePlayer(lastMessenger)) {
-                        lastPlayers.add(ConsolePlayer.create(plugin).getName());
-                    } else {
-                        plugin.getPlayer(lastMessenger).ifPresent(onlineMessenger -> lastPlayers.add(onlineMessenger.getName()));
-                    }
-                }
-
-                if (lastPlayers.isEmpty()) {
-                    if (lastMessengers.get().size() > 1) {
-                        plugin.getLocales().sendMessage(player, "error_reply_none_online");
-                    } else {
-                        plugin.getLocales().sendMessage(player, "error_reply_not_online");
-                    }
-                    return;
-                }
-
-                final StringJoiner message = new StringJoiner(" ");
-                for (String arg : args) {
-                    message.add(arg);
-                }
-
-                final String messageToSend = message.toString();
-                new PrivateMessage(player, lastPlayers, messageToSend, plugin).dispatch();
-            } else {
-                plugin.getLocales().sendMessage(player, "error_invalid_syntax", getUsage());
+    public void onExecute(@NotNull OnlineUser player, @NotNull String[] args) {
+        if (args.length >= 1) {
+            final Optional<Set<UUID>> lastMessengers = plugin.getUserCache().getLastMessengers(player.getUuid());
+            if (lastMessengers.isEmpty()) {
+                plugin.getLocales().sendMessage(player, "error_reply_no_messages");
+                return;
             }
+
+            final ArrayList<String> lastPlayers = new ArrayList<>();
+            for (UUID lastMessenger : lastMessengers.get()) {
+                if (ConsoleUser.isConsolePlayer(lastMessenger)) {
+                    lastPlayers.add(ConsoleUser.wrap(plugin).getName());
+                } else {
+                    plugin.getPlayer(lastMessenger).ifPresent(online -> lastPlayers.add(online.getName()));
+                }
+            }
+
+            if (lastPlayers.isEmpty()) {
+                if (lastMessengers.get().size() > 1) {
+                    plugin.getLocales().sendMessage(player, "error_reply_none_online");
+                } else {
+                    plugin.getLocales().sendMessage(player, "error_reply_not_online");
+                }
+                return;
+            }
+
+            final StringJoiner message = new StringJoiner(" ");
+            for (String arg : args) {
+                message.add(arg);
+            }
+
+            final String messageToSend = message.toString();
+            new PrivateMessage(player, lastPlayers, messageToSend, plugin).dispatch();
         } else {
-            plugin.getLocales().sendMessage(player, "error_no_permission");
+            plugin.getLocales().sendMessage(player, "error_invalid_syntax", getUsage());
         }
     }
 
     @Override
-    @NotNull
-    public String getPermission() {
-        return "huskchat.command.msg.reply";
-    }
-
-    @Override
-    public List<String> onTabComplete(@NotNull Player player, @NotNull String[] args) {
-        return List.of();
+    @Nullable
+    public String getPermission(@NotNull String... args) {
+        return String.join(".",
+                "huskchat", "command", "msg", "reply",
+                String.join(".", args)
+        );
     }
 
 }

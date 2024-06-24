@@ -20,11 +20,12 @@
 package net.william278.huskchat.command;
 
 import net.william278.huskchat.HuskChat;
-import net.william278.huskchat.player.ConsolePlayer;
-import net.william278.huskchat.player.Player;
+import net.william278.huskchat.channel.Channel;
+import net.william278.huskchat.user.ConsoleUser;
+import net.william278.huskchat.user.OnlineUser;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Unmodifiable;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -32,48 +33,40 @@ import java.util.stream.Collectors;
 public class ChannelCommand extends CommandBase {
 
     public ChannelCommand(@NotNull HuskChat plugin) {
-        super(plugin.getSettings().getChannelCommandAliases(), "<channel>", plugin);
+        super(plugin.getChannels().getChannelCommandAliases(), "<channel>", plugin);
     }
 
     @Override
-    public void onExecute(@NotNull Player player, @NotNull String[] args) {
-        if (player instanceof ConsolePlayer) {
+    public void onExecute(@NotNull OnlineUser player, @NotNull String[] args) {
+        if (player instanceof ConsoleUser) {
             plugin.getLocales().sendMessage(player, "error_in_game_only");
             return;
         }
-        if (player.hasPermission(getPermission())) {
-            if (args.length == 1) {
-                plugin.getPlayerCache().switchPlayerChannel(player, args[0]);
-            } else {
-                plugin.getLocales().sendMessage(player, "error_invalid_syntax", getUsage());
-            }
+        if (args.length == 1) {
+            plugin.editUserCache(c -> c.switchPlayerChannel(player, args[0], plugin));
         } else {
-            plugin.getLocales().sendMessage(player, "error_no_permission");
+            plugin.getLocales().sendMessage(player, "error_invalid_syntax", getUsage());
         }
     }
 
     @Override
-    public List<String> onTabComplete(@NotNull Player player, @NotNull String[] args) {
-        if (!player.hasPermission(getPermission())) {
-            return List.of();
-        }
+    @NotNull
+    public List<String> onTabComplete(@NotNull OnlineUser player, @NotNull String[] args) {
         if (args.length <= 1) {
-            return getChannelIdsWithSendPermission(player).stream().filter(val ->
-                            val.toLowerCase().startsWith((args.length >= 1) ? args[0].toLowerCase() : ""))
-                    .sorted().collect(Collectors.toList());
+            return getUsableChannels(player).stream()
+                    .filter(val -> val.toLowerCase().startsWith((args.length == 1) ? args[0].toLowerCase() : ""))
+                    .sorted().toList();
         }
         return List.of();
     }
 
     @NotNull
-    public Set<String> getChannelIdsWithSendPermission(Player player) {
-        final Set<String> channelsWithPermission = new HashSet<>();
-        plugin.getSettings().getChannels().forEach((id, channel) -> {
-            if (channel.getSendPermission() == null || player.hasPermission(channel.getSendPermission())) {
-                channelsWithPermission.add(channel.getId());
-            }
-        });
-        return channelsWithPermission;
+    @Unmodifiable
+    public Set<String> getUsableChannels(@NotNull OnlineUser player) {
+        return plugin.getChannels().getChannels().stream()
+                .filter(c -> c.canUserSend(player))
+                .map(Channel::getId)
+                .collect(Collectors.toSet());
     }
 
 }

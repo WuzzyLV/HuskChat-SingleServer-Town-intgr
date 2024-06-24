@@ -1,0 +1,41 @@
+plugins {
+    id 'xyz.jpenilla.run-paper' version '2.3.0'
+}
+
+dependencies {
+    implementation project(':bukkit')
+    compileOnly project(':common')
+
+    compileOnly 'io.papermc.paper:paper-api:1.19.4-R0.1-SNAPSHOT'
+    compileOnly 'org.bstats:bstats-bukkit:3.0.2'
+    compileOnly 'org.jetbrains:annotations:24.1.0'
+}
+
+shadowJar {
+    relocate 'net.william278.profanitycheckerapi', 'net.william278.huskchat.libraries.profanitycheckerapi'
+    relocate 'net.william278.desertwell', 'net.william278.huskchat.libraries.desertwell'
+    relocate 'de.themoep', 'net.william278.huskchat.libraries'
+    relocate 'dev.vankka', 'net.william278.huskchat.libraries'
+    relocate 'de.exlll', 'net.william278.huskchat.libraries'
+    relocate 'org.snakeyaml.engine', 'net.william278.huskchat.libraries.snakeyaml.engine'
+    relocate 'org.json', 'net.william278.huskchat.libraries.json'
+
+    relocate 'org.apache', 'net.william278.huskchat.libraries'
+    relocate 'org.jetbrains', 'net.william278.huskchat.libraries'
+    relocate 'org.intellij', 'net.william278.huskchat.libraries'
+    relocate 'org.bstats', 'net.william278.huskchat.libraries.bstats'
+    relocate 'space.arim', 'net.william278.huskchat.libraries.morepaperlib'
+
+    minimize()
+}
+
+tasks {
+    runServer {
+        minecraftVersion('1.20.4')
+
+        downloadPlugins {
+            url("https://download.luckperms.net/1526/bukkit/loader/LuckPerms-Bukkit-5.4.113.jar")
+            url("https://ci.lucko.me/job/spark/399/artifact/spark-bukkit/build/libs/spark-1.10.58-bukkit.jar")
+        }
+    }
+}

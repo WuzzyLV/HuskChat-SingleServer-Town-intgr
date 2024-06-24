@@ -21,7 +21,7 @@ package net.william278.huskchat.command;
 
 import net.william278.huskchat.HuskChat;
 import net.william278.huskchat.message.PrivateMessage;
-import net.william278.huskchat.player.Player;
+import net.william278.huskchat.user.OnlineUser;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -30,31 +30,29 @@ public class MessageCommand extends CommandBase {
 
     public MessageCommand(@NotNull HuskChat plugin) {
         super(
-                plugin.getSettings().getMessageCommandAliases(),
-                plugin.getSettings().doGroupMessages() ? "<player(s)> <message>" : "<player> <message>",
-                plugin);
+                plugin.getSettings().getMessageCommand().getMsgAliases(),
+                plugin.getSettings().getMessageCommand().getGroupMessages().isEnabled()
+                        ? "<player(s)> <message>" : "<player> <message>",
+                plugin
+        );
     }
 
     @Override
-    public void onExecute(@NotNull Player player, @NotNull String[] args) {
-        if (player.hasPermission(getPermission())) {
-            if (args.length >= 2) {
-                StringJoiner message = new StringJoiner(" ");
-                int messageWordCount = 0;
-                for (String arg : args) {
-                    if (messageWordCount >= 1) {
-                        message.add(arg);
-                    }
-                    messageWordCount++;
+    public void onExecute(@NotNull OnlineUser player, @NotNull String[] args) {
+        if (args.length >= 2) {
+            StringJoiner message = new StringJoiner(" ");
+            int messageWordCount = 0;
+            for (String arg : args) {
+                if (messageWordCount >= 1) {
+                    message.add(arg);
                 }
-                final List<String> targetPlayers = getTargetPlayers(args[0]);
-                final String messageToSend = message.toString();
-                new PrivateMessage(player, targetPlayers, messageToSend, plugin).dispatch();
-            } else {
-                plugin.getLocales().sendMessage(player, "error_invalid_syntax", getUsage());
+                messageWordCount++;
             }
+            final List<String> targetPlayers = getTargetPlayers(args[0]);
+            final String messageToSend = message.toString();
+            new PrivateMessage(player, targetPlayers, messageToSend, plugin).dispatch();
         } else {
-            plugin.getLocales().sendMessage(player, "error_no_permission");
+            plugin.getLocales().sendMessage(player, "error_invalid_syntax", getUsage());
         }
     }
 
@@ -67,10 +65,11 @@ public class MessageCommand extends CommandBase {
     }
 
     @Override
-    public List<String> onTabComplete(@NotNull Player player, @NotNull String[] args) {
+    @NotNull
+    public List<String> onTabComplete(@NotNull OnlineUser player, @NotNull String[] args) {
         if (args.length <= 1) {
             final ArrayList<String> userNames = new ArrayList<>();
-            for (Player connectedPlayer : plugin.getOnlinePlayers()) {
+            for (OnlineUser connectedPlayer : plugin.getOnlinePlayers()) {
                 if (!player.getUuid().equals(connectedPlayer.getUuid())) {
                     userNames.add(connectedPlayer.getName());
                 }
@@ -97,9 +96,8 @@ public class MessageCommand extends CommandBase {
                 prependedUsernames.add(precursoryText + username);
             }
             return prependedUsernames;
-        } else {
-            return List.of();
         }
+        return List.of();
     }
 
 }

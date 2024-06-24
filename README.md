@@ -45,7 +45,7 @@ It's designed to be easy to configure with an elegant out-of-box setup, while al
 
 **⭐ Filters & replacers** &mdash; Customisable spam limiting filter, anti-advertising & special emoji
 
-**⭐ Modern formatting** &mdash;  Utilise modern 1.16+ formatting, with RGB and Gradient support via [MineDown](https://github.com/Phoenix616/MineDown)
+**⭐ Modern formatting** &mdash;  Utilise modern formatting, with RGB and Gradient support via [MineDown](https://github.com/Phoenix616/MineDown)
 
 ## Building
 To build HuskChat, you'll need python (>=`v3.6`) with associated packages installed; `jep` and `alt-profanity-check`. 
@@ -75,4 +75,4 @@ Translations of the plugin locales are welcome to help make the plugin more acce
 - [bStats](https://bstats.org/plugin/bungeecord/HuskChat/11882) &mdash; View plugin metrics (Also: [Velocity](https://bstats.org/plugin/velocity/HuskChat%20-%20Velocity/14187))
 
 ---
-&copy; [William278](https://william278.net/), 2023. Licensed under the Apache-2.0 License.
+&copy; [William278](https://william278.net/), 2024. Licensed under the Apache-2.0 License.

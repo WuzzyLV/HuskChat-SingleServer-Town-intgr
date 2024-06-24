@@ -19,9 +19,11 @@
 
 package net.william278.huskchat.command;
 
+import lombok.Getter;
 import net.william278.huskchat.HuskChat;
-import net.william278.huskchat.player.Player;
+import net.william278.huskchat.user.OnlineUser;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Locale;
@@ -31,9 +33,11 @@ import java.util.Locale;
  */
 public abstract class CommandBase {
 
+    protected final HuskChat plugin;
     protected final List<String> aliases;
     protected final String usage;
-    protected final HuskChat plugin;
+    @Getter
+    protected boolean operatorOnly = false;
 
     public CommandBase(@NotNull List<String> aliases, @NotNull String usage, @NotNull HuskChat plugin) {
         if (aliases.isEmpty()) {
@@ -47,19 +51,22 @@ public abstract class CommandBase {
     /**
      * Fires when the command is executed
      *
-     * @param player {@link Player} executing the command
+     * @param player {@link OnlineUser} executing the command
      * @param args   Command arguments
      */
-    public abstract void onExecute(@NotNull Player player, @NotNull String[] args);
+    public abstract void onExecute(@NotNull OnlineUser player, @NotNull String[] args);
 
     /**
      * What should be returned when the player attempts to TAB complete the command
      *
-     * @param player {@link Player} doing the TAB completion
+     * @param player {@link OnlineUser} doing the TAB completion
      * @param args   Current command arguments
      * @return List of String arguments to offer TAB suggestions
      */
-    public abstract List<String> onTabComplete(@NotNull Player player, @NotNull String[] args);
+    @NotNull
+    public List<String> onTabComplete(@NotNull OnlineUser player, @NotNull String[] args) {
+        return List.of();
+    }
 
     /**
      * Get the primary command alias
@@ -85,9 +92,13 @@ public abstract class CommandBase {
     /**
      * Command permission node
      */
-    @NotNull
-    public String getPermission() {
-        return "huskchat.command." + getName();
+    @Nullable
+    public String getPermission(@NotNull String... children) {
+        return String.join(".",
+                "huskchat", "command",
+                children.length == 0 ? getName() : getName() +
+                        "." + String.join(".", children)
+        );
     }
 
 }

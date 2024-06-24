@@ -25,7 +25,7 @@ import net.kyori.adventure.text.format.TextColor;
 import net.william278.desertwell.about.AboutMenu;
 import net.william278.desertwell.util.UpdateChecker;
 import net.william278.huskchat.HuskChat;
-import net.william278.huskchat.player.Player;
+import net.william278.huskchat.user.OnlineUser;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -56,21 +56,18 @@ public class HuskChatCommand extends CommandBase {
                         AboutMenu.Credit.of("MalzSmith").description("Hungarian (hu-hu)"),
                         AboutMenu.Credit.of("Ceddix").description("German (de-de)"),
                         AboutMenu.Credit.of("Pukejoy_1").description("Bulgarian (bg-bg)"),
-                        AboutMenu.Credit.of("XeroLe1er").description("French (fr-fr)"))
+                        AboutMenu.Credit.of("XeroLe1er").description("French (fr-fr)"),
+                        AboutMenu.Credit.of("Wirayuda5620").description("Bahasa Indonesia (id-id)"))
                 .buttons(
                         AboutMenu.Link.of("https://william278.net/docs/huskchat").text("Documentation").icon("⛏"),
                         AboutMenu.Link.of("https://github.com/WiIIiam278/HuskChat/issues").text("Issues").icon("❌").color(TextColor.color(0xff9f0f)),
                         AboutMenu.Link.of("https://discord.gg/tVYhJfyDWG").text("Discord").icon("⭐").color(TextColor.color(0x6773f5)))
                 .build();
+        this.operatorOnly = true;
     }
 
     @Override
-    public void onExecute(@NotNull Player player, @NotNull String[] args) {
-        if (!player.hasPermission(getPermission())) {
-            plugin.getLocales().sendMessage(player, "error_no_permission");
-            return;
-        }
-
+    public void onExecute(@NotNull OnlineUser player, @NotNull String[] args) {
         if (args.length >= 1) {
             switch (args[0].toLowerCase(Locale.ROOT)) {
                 case "about", "info" -> player.sendMessage(aboutMenu.toComponent());
@@ -95,10 +92,8 @@ public class HuskChatCommand extends CommandBase {
     }
 
     @Override
-    public List<String> onTabComplete(@NotNull Player player, @NotNull String[] args) {
-        if (!player.hasPermission(getPermission())) {
-            return List.of();
-        }
+    @NotNull
+    public List<String> onTabComplete(@NotNull OnlineUser player, @NotNull String[] args) {
         if (args.length <= 1) {
             return Arrays.stream(COMMAND_TAB_ARGUMENTS)
                     .filter(i -> i.toLowerCase().startsWith((args.length == 1) ? args[0].toLowerCase() : ""))
